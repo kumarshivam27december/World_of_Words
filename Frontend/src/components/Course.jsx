@@ -11,7 +11,7 @@ function Course() {
   // Fetch books from the backend when the component mounts
   useEffect(() => {
     axios
-      .get("http://localhost:4001/book/books") // Fetch books from MongoDB
+      .get("https://world-of-words-vrvn.onrender.com/book/books") // Fetch books from MongoDB
       .then((response) => {
         setBooks(response.data); // Store the books in state
       })
