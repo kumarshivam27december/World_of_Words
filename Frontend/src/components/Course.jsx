@@ -1,106 +1,74 @@
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";  // Import Axios
-// import { Link } from "react-router-dom";  // Import Link for "Go to Home" button
-// function Course() {
-//   const [books, setBooks] = useState([]);
-//   // Fetch books when the component mounts
-//   useEffect(() => {
-//     // Fetch books from the backend
-//     axios.get("http://localhost:4001/book")  // Adjust the port as per your backend configuration
-//       .then((response) => {
-//         setBooks(response.data);  // Set the fetched books to state
-//       })
-//       .catch((error) => {
-//         console.error("Error fetching books:", error);
-//       });
-//   }, []);  // Empty dependency array means this will run only once when the component mounts
-//   return (
-//     <div className="max-w-screen-2xl container mx-auto md:px-20 px-4 mt-28">
-//       <h1 className="text-3xl font-bold text-center text-pink-500">Available Books</h1>
-//       <div className="book-list mt-8">
-//         {books.length === 0 ? (
-//           <p className="text-center text-gray-600">No books available</p>
-//         ) : (
-//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-//             {books.map((book) => (
-//               <div key={book._id} className="book-card bg-white rounded-lg shadow-md p-6 transition-transform duration-300 hover:scale-105">
-//                 <h3 className="text-xl font-semibold text-gray-800">{book.title}</h3>
-//                 <p className="text-gray-600 mt-2">{book.name}</p>
-//                 <p className="text-gray-600 mt-2">Price: ${book.price}</p>
-//                 <p className="text-gray-600 mt-2">Category: {book.category}</p>
-//                 <img src={book.image} alt={book.title} className="mt-4 rounded-lg w-full h-72 object-cover" /> {/* Increased height */}
-//               </div>
-//             ))}
-//           </div>
-//         )}
-//       </div>
-//       {/* Go to Home Button */}
-//       <div className="text-center mt-8">
-//         <Link to="/">
-//           <button className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700 duration-300">
-//             Go to Home
-//           </button>
-//         </Link>
-//       </div>
-//     </div>
-//   );
-// }
-// export default Course;
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "../context/CartContext";  // Import Cart Context
+import { useCart } from "../context/CartContext"; // Import Cart Context
+import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 
 function Course() {
-  const [books, setBooks] = useState([]);
-  const { addToCart } = useCart();  // Get addToCart function
-  const navigate = useNavigate();   // To redirect after adding to cart
+  const [books, setBooks] = useState([]); // State to store books
+  const { addToCart } = useCart(); // Access addToCart function from context
+  const navigate = useNavigate(); // Initialize navigate for redirection
 
+  // Fetch books from the backend when the component mounts
   useEffect(() => {
     axios
-      .get("http://localhost:4001/book")
-      .then((response) => setBooks(response.data))
-      .catch((error) => console.error("Error fetching books:", error));
-  }, []);
+      .get("http://localhost:4001/book/books") // Fetch books from MongoDB
+      .then((response) => {
+        setBooks(response.data); // Store the books in state
+      })
+      .catch((error) => {
+        console.error("Error fetching books:", error); // Handle errors
+      });
+  }, []); // Empty dependency array means this will run once when the component mounts
 
-  const handleBookClick = (book) => {
-    addToCart(book);        // Add book to cart
-    navigate("/payment");   // Redirect to payment page
+  // Handle adding a book to the cart
+  const handleAddToCart = (book) => {
+    addToCart(book); // Add the book to the cart
+  };
+
+  // Handle proceeding to the payment page
+  const handleProceedToPayment = () => {
+    navigate("/payment"); // Redirect to the payment page
   };
 
   return (
     <div className="max-w-screen-2xl container mx-auto md:px-20 px-4 mt-28">
       <h1 className="text-3xl font-bold text-center text-pink-500">Available Books</h1>
-      <div className="book-list mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
         {books.length === 0 ? (
-          <p className="text-center text-gray-600">No books available</p>
+          <p className="text-center text-gray-600">No books available</p> // Handle empty books
         ) : (
+          // Map through the books and display each one
           books.map((book) => (
-            <div
-              key={book._id}
-              className="book-card bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-transform duration-300 hover:scale-105"
-              onClick={() => handleBookClick(book)} // Add click handler
-            >
+            <div key={book._id} className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-xl font-semibold text-gray-800">{book.title}</h3>
               <p className="text-gray-600 mt-2">{book.name}</p>
-              <p className="text-gray-600 mt-2">Price: ${book.price}</p>
-              <p className="text-gray-600 mt-2">Category: {book.category}</p>
+              <p className="text-gray-600">Price: ${book.price}</p>
               <img
                 src={book.image}
                 alt={book.title}
                 className="mt-4 rounded-lg w-full h-72 object-cover"
               />
+
+              {/* Add to Cart Button */}
+              <button
+                onClick={() => handleAddToCart(book)} // Add book to cart
+                className="bg-pink-500 text-white py-2 px-4 rounded-md mt-4 hover:bg-pink-700 duration-300"
+              >
+                Add to Cart
+              </button>
             </div>
           ))
         )}
       </div>
 
+      {/* Proceed to Payment Button */}
       <div className="text-center mt-8">
-        <Link to="/">
-          <button className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700 duration-300">
-            Go to Home
-          </button>
-        </Link>
+        <button
+          onClick={handleProceedToPayment} // Navigate to payment page
+          className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-700 duration-300"
+        >
+          Proceed to Payment
+        </button>
       </div>
     </div>
   );

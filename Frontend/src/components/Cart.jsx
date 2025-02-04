@@ -1,17 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 function Cart() {
-  const [cart, setCart] = useState([
-    { id: 1, name: "T-Shirt", price: 20 },
-    { id: 2, name: "Jeans", price: 40 },
-  ]);
+  const { cart, removeFromCart } = useCart();
 
-  const removeItem = (id) => {
-    setCart(cart.filter((item) => item.id !== id));
-  };
-
-  const totalAmount = cart.reduce((acc, item) => acc + item.price, 0);
+  const totalAmount = cart.reduce((acc, item) => acc + item.price, 0); // Total price calculation
 
   return (
     <div className="max-w-screen-2xl container mx-auto md:px-20 px-4 mt-28">
@@ -21,12 +15,14 @@ function Cart() {
         <p className="text-center text-gray-600 mt-6">Your cart is empty.</p>
       ) : (
         <div className="max-w-md mx-auto mt-6 space-y-4">
-          {cart.map((item) => (
-            <div key={item.id} className="flex justify-between items-center bg-white p-4 rounded-md shadow-md">
-              <p className="text-gray-800">{item.name}</p>
-              <p className="text-gray-600">${item.price}</p>
+          {cart.map((item, index) => (
+            <div key={index} className="flex justify-between items-center bg-white p-4 rounded-md shadow-md">
+              <div>
+                <p className="text-gray-800 font-semibold">{item.title}</p>
+                <p className="text-gray-600">Price: ${item.price}</p>
+              </div>
               <button
-                onClick={() => removeItem(item.id)}
+                onClick={() => removeFromCart(item)}
                 className="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-700 duration-300"
               >
                 Remove
