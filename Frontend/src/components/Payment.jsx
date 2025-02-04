@@ -1,54 +1,49 @@
-import React, { useState } from "react";
+import React from "react";
+import { useCart } from "../context/CartContext";
 import { Link } from "react-router-dom";
 
 function Payment() {
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvv, setCvv] = useState("");
+  const { cart, clearCart } = useCart();
+  const totalAmount = cart.reduce((acc, item) => acc + item.price, 0);
 
-  const handlePayment = (e) => {
-    e.preventDefault();
-    alert("Payment Successful! Thank you for shopping.");
+  const handlePayment = () => {
+    alert("Payment Successful! 🎉");
+    clearCart();
   };
 
   return (
     <div className="max-w-screen-2xl container mx-auto md:px-20 px-4 mt-28">
-      <h1 className="text-3xl font-bold text-center text-pink-500">Payment</h1>
-      <form onSubmit={handlePayment} className="max-w-md mx-auto mt-8 space-y-4">
-        <input
-          type="text"
-          placeholder="Card Number"
-          className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-pink-500"
-          value={cardNumber}
-          onChange={(e) => setCardNumber(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Expiry Date (MM/YY)"
-          className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-pink-500"
-          value={expiry}
-          onChange={(e) => setExpiry(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="CVV"
-          className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-pink-500"
-          value={cvv}
-          onChange={(e) => setCvv(e.target.value)}
-          required
-        />
-        <button type="submit" className="w-full bg-pink-500 text-white py-2 rounded-md hover:bg-pink-700 duration-300">
-          Pay Now
-        </button>
-      </form>
+      <h1 className="text-3xl font-bold text-center text-pink-500">Payment Page</h1>
 
-      {/* Back to Cart */}
-      <div className="text-center mt-6">
-        <Link to="/cart">
+      {cart.length === 0 ? (
+        <p className="text-center text-gray-600 mt-6">No items in the cart.</p>
+      ) : (
+        <div className="max-w-md mx-auto mt-6 bg-white p-6 rounded-md shadow-md space-y-4">
+          {cart.map((item) => (
+            <div key={item._id} className="flex justify-between">
+              <p>{item.title}</p>
+              <p>${item.price}</p>
+            </div>
+          ))}
+          <hr className="my-2" />
+          <div className="flex justify-between font-bold text-lg">
+            <p>Total Amount:</p>
+            <p>${totalAmount}</p>
+          </div>
+
+          <button
+            onClick={handlePayment}
+            className="bg-green-500 text-white w-full py-2 rounded-md hover:bg-green-700 duration-300"
+          >
+            Pay Now
+          </button>
+        </div>
+      )}
+
+      <div className="text-center mt-8">
+        <Link to="/">
           <button className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700 duration-300">
-            Back to Cart
+            Go to Home
           </button>
         </Link>
       </div>
