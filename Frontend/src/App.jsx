@@ -10,9 +10,9 @@ import { Toaster } from "react-hot-toast";
 import { useAuth } from "./context/AuthProvider";
 import Jobs from "./components/Jobs";
 import PressKit from "./components/PressKit";
-import Cart from "./components/Cart";       // 🛒 Import Cart Component
-import Payment from "./components/Payment"; // 💳 Import Payment Component
-import { CartProvider } from "./context/CartContext.jsx"; // 🛒 Import Cart Provider
+import Cart from "./components/Cart";       
+import Payment from "./components/Payment";
+import { CartProvider } from "./context/CartContext.jsx"; 
 
 function App() {
   const [authUser, setAuthUser] = useAuth(); // Check authentication state
